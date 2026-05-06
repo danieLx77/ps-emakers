@@ -1,6 +1,9 @@
 package br.com.emakers.psemakers.data.entity;
 
+import br.com.emakers.psemakers.data.dto.request.LivroRequest;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
@@ -10,6 +13,7 @@ import java.util.List;
 @Table(name = "livro")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Livro {
 
     @Id
@@ -27,4 +31,17 @@ public class Livro {
 
     @ManyToMany(mappedBy = "livros")
     private List<Pessoa> pessoas;
+
+    @Builder
+    public Livro(LivroRequest dto){
+        atualizarDados(dto);
+    }
+
+    public void atualizarDados(LivroRequest dto){
+        this.autor = dto.autor();
+        this.dataLancamento = dto.dataLancamento();
+        this.nome = dto.nome();
+    }
+
+
 }

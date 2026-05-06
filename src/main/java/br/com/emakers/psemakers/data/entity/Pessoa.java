@@ -1,6 +1,9 @@
 package br.com.emakers.psemakers.data.entity;
 
+import br.com.emakers.psemakers.data.dto.request.PessoaRequest;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.List;
@@ -9,6 +12,7 @@ import java.util.List;
 @Table(name = "pessoa")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 
 public class Pessoa {
 
@@ -38,6 +42,19 @@ public class Pessoa {
             inverseJoinColumns = @JoinColumn (name = "id_livro")
     )
     private List<Livro> livros;
+
+    @Builder
+    public Pessoa(PessoaRequest dto){
+       atualizarDados(dto);
+    }
+
+    public void atualizarDados(PessoaRequest dto){
+        this.nome = dto.nome();
+        this.cep = dto.cep();
+        this.cpf = dto.cpf();
+        this.email = dto.email();
+        this.senha = dto.senha();
+    }
 
 
 }
