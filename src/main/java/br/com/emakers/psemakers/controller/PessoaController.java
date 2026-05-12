@@ -43,4 +43,14 @@ public class PessoaController {
         pessoaService.deletarPessoa(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{idPessoa}/emprestar/{idLivro}")
+    public ResponseEntity<PessoaResponse> emprestar(@PathVariable Long idPessoa, @PathVariable Long idLivro) {
+        return ResponseEntity.ok(pessoaService.emprestarLivro(idPessoa, idLivro));
+    }
+
+    @PatchMapping("/{idPessoa}/devolver/{idLivro}")
+    public ResponseEntity<PessoaResponse> devolver(@PathVariable Long idPessoa, @PathVariable Long idLivro) {
+        return ResponseEntity.ok(pessoaService.devolverLivro(idPessoa, idLivro));
+    }
 }
