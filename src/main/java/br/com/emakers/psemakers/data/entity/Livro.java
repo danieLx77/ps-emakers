@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,7 +31,7 @@ public class Livro {
     private LocalDate dataLancamento;
 
     @ManyToMany(mappedBy = "livros")
-    private List<Pessoa> pessoas;
+    private List<Pessoa> pessoas = new ArrayList<>();
 
     @Builder
     public Livro(LivroRequest dto){
