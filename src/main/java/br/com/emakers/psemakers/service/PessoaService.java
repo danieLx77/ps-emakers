@@ -1,6 +1,8 @@
 package br.com.emakers.psemakers.service;
 
+import br.com.emakers.psemakers.client.ViaCepClient;
 import br.com.emakers.psemakers.data.dto.request.PessoaRequest;
+import br.com.emakers.psemakers.data.dto.response.EnderecoResponse;
 import br.com.emakers.psemakers.data.dto.response.PessoaResponse;
 import br.com.emakers.psemakers.data.entity.Livro;
 import br.com.emakers.psemakers.data.entity.Pessoa;
@@ -21,10 +23,15 @@ public class PessoaService {
     @Autowired
     private LivroRepository livroRepository;
 
-    public PessoaResponse cadastrarPessoa(PessoaRequest pessoaRequest){
-        Pessoa pessoa = pessoaRepository.save(new Pessoa(pessoaRequest));
+    @Autowired
+    private ViaCepClient viaCepClient;
 
-        return new PessoaResponse(pessoa);
+    public PessoaResponse cadastrarPessoa(PessoaRequest pessoaRequest){
+        Pessoa pessoa = new Pessoa(pessoaRequest);
+
+        preencherEndereco(pessoa);
+
+        return new PessoaResponse(pessoaRepository.save(pessoa));
     }
 
     public List<PessoaResponse> listarTodasPessoas(){
@@ -36,10 +43,11 @@ public class PessoaService {
                 orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
     }
 
-    public PessoaResponse atualizarPessoa(Long id, PessoaRequest pessoaRequest){
+    public PessoaResponse atualizarPessoa(Long id, PessoaRequest pessoaRequest) {
         return pessoaRepository.findById(id)
                 .map(pessoaExistente -> {
                     pessoaExistente.atualizarDados(pessoaRequest);
+                    preencherEndereco(pessoaExistente);
                     return new PessoaResponse(pessoaRepository.save(pessoaExistente));
                 })
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada para atualizar"));
@@ -75,6 +83,22 @@ public class PessoaService {
         pessoa.getLivros().remove(livro);
 
         return new PessoaResponse(pessoaRepository.save(pessoa));
+    }
+
+    private void preencherEndereco(Pessoa pessoa) {
+        if (pessoa.getCep() != null && !pessoa.getCep().isBlank()) {
+            try {
+                EnderecoResponse endereco = viaCepClient.buscarEnderecoPorCep(pessoa.getCep());
+                if (endereco != null && endereco.logradouro() != null) {
+                    pessoa.setLogradouro(endereco.logradouro());
+                    pessoa.setBairro(endereco.bairro());
+                    pessoa.setCidade(endereco.localidade());
+                    pessoa.setUf(endereco.uf());
+                }
+            } catch (Exception e) {
+                System.err.println("Erro ao buscar o CEP " + pessoa.getCep() + ": " + e.getMessage());
+            }
+        }
     }
 
     }

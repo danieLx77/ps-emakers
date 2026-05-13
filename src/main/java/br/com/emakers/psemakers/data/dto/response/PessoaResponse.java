@@ -10,10 +10,15 @@ public record PessoaResponse (
         String cpf,
         String email,
         String cep,
+        String logradouro,
+        String bairro,
+        String cidade,
+        String uf,
         List<LivroResponse> livros
 ) {
     public PessoaResponse(Pessoa pessoa){
-        this(pessoa.getIdPessoa(), pessoa.getNome(), pessoa.getCpf(), pessoa.getEmail(), pessoa.getCep(),
+        this(pessoa.getIdPessoa(), pessoa.getNome(), pessoa.getCpf(), pessoa.getEmail(), pessoa.getCep(), pessoa.getLogradouro(),
+                pessoa.getBairro(), pessoa.getCidade(), pessoa.getUf(),
                 pessoa.getLivros() != null ?
                         pessoa.getLivros().stream().map(LivroResponse::new).toList(): java.util.Collections.emptyList());
     }
