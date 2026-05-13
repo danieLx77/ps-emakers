@@ -37,6 +37,18 @@ public class Pessoa {
     @Column(length = 100, nullable = false)
     private String senha;
 
+    @Column(length = 150)
+    private String logradouro;
+
+    @Column(length = 100)
+    private String bairro;
+
+    @Column(length = 100)
+    private String cidade;
+
+    @Column(length = 2)
+    private String uf;
+
     @ManyToMany
     @JoinTable(
             name = "emprestimo",
