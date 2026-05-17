@@ -1,6 +1,7 @@
 package br.com.emakers.psemakers.data.entity;
 
 import br.com.emakers.psemakers.data.dto.request.PessoaRequest;
+import br.com.emakers.psemakers.data.enuns.StatusRegistro;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,6 +49,10 @@ public class Pessoa {
 
     @Column(length = 2)
     private String uf;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusRegistro status = StatusRegistro.ATIVO;
 
     @ManyToMany
     @JoinTable(

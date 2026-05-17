@@ -1,6 +1,7 @@
 package br.com.emakers.psemakers.data.entity;
 
 import br.com.emakers.psemakers.data.dto.request.LivroRequest;
+import br.com.emakers.psemakers.data.enuns.StatusRegistro;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +30,10 @@ public class Livro {
 
     @Column(name = "data_lancamento")
     private LocalDate dataLancamento;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusRegistro status = StatusRegistro.ATIVO;
 
     @ManyToMany(mappedBy = "livros")
     private List<Pessoa> pessoas = new ArrayList<>();
