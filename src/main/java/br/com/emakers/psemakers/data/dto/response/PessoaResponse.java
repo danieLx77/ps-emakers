@@ -14,12 +14,12 @@ public record PessoaResponse (
         String bairro,
         String cidade,
         String uf,
-        List<LivroResponse> livros
+        List<LivroResponseSimple> livros
 ) {
     public PessoaResponse(Pessoa pessoa){
         this(pessoa.getIdPessoa(), pessoa.getNome(), pessoa.getCpf(), pessoa.getEmail(), pessoa.getCep(), pessoa.getLogradouro(),
                 pessoa.getBairro(), pessoa.getCidade(), pessoa.getUf(),
                 pessoa.getLivros() != null ?
-                        pessoa.getLivros().stream().map(LivroResponse::new).toList(): java.util.Collections.emptyList());
+                        pessoa.getLivros().stream().map(LivroResponseSimple::new).toList(): java.util.Collections.emptyList());
     }
 }
