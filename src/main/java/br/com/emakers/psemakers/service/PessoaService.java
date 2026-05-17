@@ -6,6 +6,7 @@ import br.com.emakers.psemakers.data.dto.response.EnderecoResponse;
 import br.com.emakers.psemakers.data.dto.response.PessoaResponse;
 import br.com.emakers.psemakers.data.entity.Livro;
 import br.com.emakers.psemakers.data.entity.Pessoa;
+import br.com.emakers.psemakers.data.enuns.StatusRegistro;
 import br.com.emakers.psemakers.data.repository.LivroRepository;
 import br.com.emakers.psemakers.data.repository.PessoaRepository;
 import jakarta.transaction.Transactional;
@@ -26,6 +27,7 @@ public class PessoaService {
     @Autowired
     private ViaCepClient viaCepClient;
 
+    @Transactional
     public PessoaResponse cadastrarPessoa(PessoaRequest pessoaRequest){
         Pessoa pessoa = new Pessoa(pessoaRequest);
 
@@ -35,16 +37,17 @@ public class PessoaService {
     }
 
     public List<PessoaResponse> listarTodasPessoas(){
-        return pessoaRepository.findAll().stream().map(PessoaResponse::new).toList();
+        return pessoaRepository.findByStatus(StatusRegistro.ATIVO).stream().map(PessoaResponse::new).toList();
     }
 
     public PessoaResponse buscarPorId(Long id){
-        return pessoaRepository.findById(id).map(PessoaResponse::new).
+        return pessoaRepository.findByIdAndStatus(id, StatusRegistro.ATIVO).map(PessoaResponse::new).
                 orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
     }
 
+    @Transactional
     public PessoaResponse atualizarPessoa(Long id, PessoaRequest pessoaRequest) {
-        return pessoaRepository.findById(id)
+        return pessoaRepository.findByIdAndStatus(id, StatusRegistro.ATIVO)
                 .map(pessoaExistente -> {
                     pessoaExistente.atualizarDados(pessoaRequest);
                     preencherEndereco(pessoaExistente);
@@ -53,16 +56,21 @@ public class PessoaService {
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada para atualizar"));
     }
 
+    @Transactional
     public void deletarPessoa(Long id){
-       pessoaRepository.deleteById(id);
+        Pessoa pessoa = pessoaRepository.findByIdAndStatus(id, StatusRegistro.ATIVO)
+                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada ou inativa"));
+
+        pessoa.setStatus(StatusRegistro.INATIVO);
+        pessoaRepository.save(pessoa);
     }
 
     @Transactional
     public PessoaResponse emprestarLivro(Long idPessoa, Long idLivro){
-        Pessoa pessoa = pessoaRepository.findById(idPessoa)
+        Pessoa pessoa = pessoaRepository.findByIdAndStatus(idPessoa, StatusRegistro.ATIVO)
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
 
-        Livro livro = livroRepository.findById(idLivro)
+        Livro livro = livroRepository.findByIdAndStatus(idLivro, StatusRegistro.ATIVO)
                 .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
 
         if(!pessoa.getLivros().contains(livro)){
@@ -74,10 +82,10 @@ public class PessoaService {
 
     @Transactional
     public PessoaResponse devolverLivro(Long idPessoa, Long idLivro) {
-        Pessoa pessoa = pessoaRepository.findById(idPessoa)
+        Pessoa pessoa = pessoaRepository.findByIdAndStatus(idPessoa, StatusRegistro.ATIVO)
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
 
-        Livro livro = livroRepository.findById(idLivro)
+        Livro livro = livroRepository.findByIdAndStatus(idLivro, StatusRegistro.ATIVO)
                 .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
 
         pessoa.getLivros().remove(livro);
