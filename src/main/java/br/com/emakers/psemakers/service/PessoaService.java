@@ -9,6 +9,7 @@ import br.com.emakers.psemakers.data.entity.Pessoa;
 import br.com.emakers.psemakers.data.enuns.StatusRegistro;
 import br.com.emakers.psemakers.data.repository.LivroRepository;
 import br.com.emakers.psemakers.data.repository.PessoaRepository;
+import br.com.emakers.psemakers.exception.pessoa.PessoaInativaException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,25 +42,25 @@ public class PessoaService {
     }
 
     public PessoaResponse buscarPorId(Long id){
-        return pessoaRepository.findByIdAndStatus(id, StatusRegistro.ATIVO).map(PessoaResponse::new).
-                orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
+        return pessoaRepository.findByIdPessoaAndStatus(id, StatusRegistro.ATIVO).map(PessoaResponse::new).
+                orElseThrow(() -> new PessoaInativaException("Pessoa não encontrada"));
     }
 
     @Transactional
     public PessoaResponse atualizarPessoa(Long id, PessoaRequest pessoaRequest) {
-        return pessoaRepository.findByIdAndStatus(id, StatusRegistro.ATIVO)
+        return pessoaRepository.findByIdPessoaAndStatus(id, StatusRegistro.ATIVO)
                 .map(pessoaExistente -> {
                     pessoaExistente.atualizarDados(pessoaRequest);
                     preencherEndereco(pessoaExistente);
                     return new PessoaResponse(pessoaRepository.save(pessoaExistente));
                 })
-                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada para atualizar"));
+                .orElseThrow(() -> new PessoaInativaException("Pessoa não encontrada para atualizar"));
     }
 
     @Transactional
     public void deletarPessoa(Long id){
-        Pessoa pessoa = pessoaRepository.findByIdAndStatus(id, StatusRegistro.ATIVO)
-                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada ou inativa"));
+        Pessoa pessoa = pessoaRepository.findByIdPessoaAndStatus(id, StatusRegistro.ATIVO)
+                .orElseThrow(() -> new PessoaInativaException("Pessoa não encontrada ou inativa"));
 
         pessoa.setStatus(StatusRegistro.INATIVO);
         pessoaRepository.save(pessoa);
@@ -67,11 +68,11 @@ public class PessoaService {
 
     @Transactional
     public PessoaResponse emprestarLivro(Long idPessoa, Long idLivro){
-        Pessoa pessoa = pessoaRepository.findByIdAndStatus(idPessoa, StatusRegistro.ATIVO)
-                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
+        Pessoa pessoa = pessoaRepository.findByIdPessoaAndStatus(idPessoa, StatusRegistro.ATIVO)
+                .orElseThrow(() -> new PessoaInativaException("Pessoa não encontrada"));
 
-        Livro livro = livroRepository.findByIdAndStatus(idLivro, StatusRegistro.ATIVO)
-                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+        Livro livro = livroRepository.findByIdLivroAndStatus(idLivro, StatusRegistro.ATIVO)
+                .orElseThrow(() -> new PessoaInativaException("Livro não encontrado"));
 
         if(!pessoa.getLivros().contains(livro)){
             pessoa.getLivros().add(livro);
@@ -82,11 +83,11 @@ public class PessoaService {
 
     @Transactional
     public PessoaResponse devolverLivro(Long idPessoa, Long idLivro) {
-        Pessoa pessoa = pessoaRepository.findByIdAndStatus(idPessoa, StatusRegistro.ATIVO)
-                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
+        Pessoa pessoa = pessoaRepository.findByIdPessoaAndStatus(idPessoa, StatusRegistro.ATIVO)
+                .orElseThrow(() -> new PessoaInativaException("Pessoa não encontrada"));
 
-        Livro livro = livroRepository.findByIdAndStatus(idLivro, StatusRegistro.ATIVO)
-                .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+        Livro livro = livroRepository.findByIdLivroAndStatus(idLivro, StatusRegistro.ATIVO)
+                .orElseThrow(() -> new PessoaInativaException("Livro não encontrado"));
 
         pessoa.getLivros().remove(livro);
 
