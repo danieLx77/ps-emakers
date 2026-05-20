@@ -10,6 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
-    Optional<Pessoa> findByIdAndStatus(Long id, StatusRegistro status);
+    Optional<Pessoa> findByIdPessoaAndStatus(Long id, StatusRegistro status);
     List<Pessoa> findByStatus(StatusRegistro status);
 }

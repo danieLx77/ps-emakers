@@ -10,6 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface LivroRepository extends JpaRepository<Livro, Long> {
-    Optional<Livro> findByIdAndStatus(Long id, StatusRegistro status);
+    Optional<Livro> findByIdLivroAndStatus(Long id, StatusRegistro status);
     List<Livro> findByStatus(StatusRegistro status);
 }
