@@ -12,6 +12,7 @@ import br.com.emakers.psemakers.data.repository.PessoaRepository;
 import br.com.emakers.psemakers.exception.pessoa.PessoaInativaException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,9 +29,15 @@ public class PessoaService {
     @Autowired
     private ViaCepClient viaCepClient;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Transactional
     public PessoaResponse cadastrarPessoa(PessoaRequest pessoaRequest){
         Pessoa pessoa = new Pessoa(pessoaRequest);
+
+        String senhaCriptografada = passwordEncoder.encode(pessoa.getSenha());
+        pessoa.setSenha(senhaCriptografada);
 
         preencherEndereco(pessoa);
 
