@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
     Optional<Pessoa> findByIdPessoaAndStatus(Long id, StatusRegistro status);
     List<Pessoa> findByStatus(StatusRegistro status);
+    Optional<Pessoa> findByEmailAndStatus(String email, StatusRegistro status);
 }
