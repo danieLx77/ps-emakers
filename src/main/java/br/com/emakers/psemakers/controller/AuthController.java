@@ -1,5 +1,6 @@
 package br.com.emakers.psemakers.controller;
 
+import br.com.emakers.psemakers.controller.docs.AuthDoc;
 import br.com.emakers.psemakers.data.dto.request.AuthRequest;
 import br.com.emakers.psemakers.data.dto.response.LoginResponse;
 import br.com.emakers.psemakers.data.entity.Pessoa;
@@ -16,7 +17,7 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/auth")
-public class AuthController {
+public class AuthController implements AuthDoc {
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -24,6 +25,7 @@ public class AuthController {
     @Autowired
     private TokenService tokenService;
 
+    @Override
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid AuthRequest dados) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(dados.email(), dados.senha());
