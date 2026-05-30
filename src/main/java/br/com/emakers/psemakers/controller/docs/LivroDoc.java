@@ -36,6 +36,6 @@ public interface LivroDoc {
 
     @Operation(summary = "Inativa um livro (Soft Delete)", description = "Exige token JWT. Altera o status do livro para INATIVO.")
     @ApiResponse(responseCode = "204", description = "Livro inativado com sucesso")
-    @ApiResponse(responseCode = "44", description = "Livro não encontrado", content = @Content)
+    @ApiResponse(responseCode = "404", description = "Livro não encontrado", content = @Content)
     ResponseEntity<Void> deletarLivro(Long id);
 }

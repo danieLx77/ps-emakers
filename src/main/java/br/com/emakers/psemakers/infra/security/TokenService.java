@@ -40,8 +40,8 @@ public class TokenService {
             return JWT.require(algorithm)
                     .withIssuer("ps-emakers-api")
                     .build()
-                    .verify(token) // Verifica a assinatura e a validade
-                    .getSubject(); // Devolve o e-mail salvo dentro do token
+                    .verify(token)
+                    .getSubject();
         } catch (JWTVerificationException exception) {
             return "";
         }
