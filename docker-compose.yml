@@ -6,7 +6,7 @@ services:
     container_name: ps-emakers-db
     restart: always
     environment:
-      POSTGRES_DB: ${DB_NAME:-ps_emakers}
+      POSTGRES_DB: ${DB_NAME:-ps_emakers-db}
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
     ports:
@@ -25,7 +25,7 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME:-ps_emakers}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME:-ps_emakers-db}
       SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-postgres}
       SECRET: ${SECRET:-senhasecreta}
